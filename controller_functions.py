@@ -7,6 +7,10 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 from werkzeug.utils import secure_filename
 
+import PIL
+from PIL import Image
+
+
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'png'])
 CARDS_PER_ROW = 4
 
@@ -41,7 +45,7 @@ def upload_file():
             filename = secure_filename(file.filename)
             file.save(os.path.join(store_file_path, filename))
             flash('File(s) successfully uploaded')
-            Photos.add_to_db(filename, user_id)
+            Photos.add_to_db(filename, store_file_path, user_id)
             return redirect(url_for("show_dashboard"))
 
 
@@ -85,7 +89,7 @@ def show_dashboard():
 
     current_user = Users.query.get(session['user_id'])
     current_user_photos = current_user.user_photos
-
+    print(f"PHOTOS: {current_user_photos}")
     return render_template("dashboard.html", user=current_user, photos=current_user_photos)
 
 
@@ -110,9 +114,47 @@ def users_logout():
 
 
 def show_edit_page(id):
+    print(f"ROUTE: show_edit_page")
     current_photo = Photos.query.get(id)
     current_user = Users.query.get(session['user_id'])
-    print(f"ROUTE: show_edit_page")
     return render_template("edit_photo.html", user=current_user, photo=current_photo)
 
+
+def update_photo_info(id):
+    print(f"ROUTE: update_photo_info")
+    # print(f"REQUEST FORM: {request.form}")
+    current_user = Users.query.get(session['user_id'])
+
+    photo = Photos.query.get(id)
+
+    store_path = photo.file_path + '/' + photo.file_name
+    store_path_new = photo.file_path + '/' + request.form['photo_file_name']
+    # print(f"Update filepath = {store_path}")
+
+    if photo.file_name != request.form['photo_file_name']:
+        print(f"Update filename")
+        photo.file_name = request.form['photo_file_name']
+        print(f"Renaming file from {store_path} to {store_path_new}")
+        os.rename(store_path, store_path_new)
+
+    if photo.description != request.form['photo_description']:
+        print(f"Update description")
+        photo.description = request.form['photo_description']
+
+    # if photo.create_at != request.form['photo_create_date']:
+    #     print(f"Update create_date")
+    #     photo.create_at = request.form['photo_create_date']
+
+    # ret_id = str(photo.id)
+    db.session.commit()
+
+    return redirect(url_for("show_dashboard"))
+
+
+def rotate_image():
+    image_path = "./static/storage/2/photo.JPG"
+    image_save_path = "./static/storage/2/photo.JPG_rotated.jpg"
+    image = Image.open(image_path)
+    image.rotate(90, expand=True).save(image_save_path)
+    return
 

@@ -32,15 +32,15 @@
 <div class="container">
     <br>
 
-    <div class="card-columns">
+    <div class="card-columns" >
       {% for photo in photos %}
       <div class="card">
         <img src="/static/storage/{{ user.id }}/{{ photo.file_name }}" class="card-img-top" alt="...">
         <div class="card-body">
           <h5 class="card-title">{{ photo.file_name }}</h5>
-          <p class="card-text">Description</p>
+          <p class="card-text">{{ photo.description }}</p>
           <p class="card-text">
-              <small class="text-muted">Create Date: {{ photo.created_at }}</small>
+              <small class="text-muted">Create Date: {{ photo.create_at }}</small>
                 <a href="/edit_photo/{{ photo.id }}" class="card-link float-right">Edit</a>
           </p>
         </div>

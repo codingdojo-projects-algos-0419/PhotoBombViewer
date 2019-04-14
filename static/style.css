@@ -1,5 +1,5 @@
-/**{*/
-    /*border: dotted 2px red;*/
+/** {*/
+ /*border: dotted 2px red;*/
 /*}*/
 
 body {
@@ -28,3 +28,20 @@ body {
 .card-columns {
     column-count: 4;
   }
+
+.dashboard_cards {
+    min-height: 100px;
+    alignment: top;
+
+}
+
+/*#upload {*/
+    /*display: inline-flex;*/
+    /*width: auto;*/
+    /*!*padding-left: 100px;*!*/
+/*}*/
+
+/*.center_div{*/
+    /*margin: 0 auto;*/
+    /*width:80% !* value of your choice which suits your alignment *!*/
+/*}*/

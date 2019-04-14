@@ -27,26 +27,41 @@
 </header>
 
 <div class="container">
-                <h1>Welcome to Quote Dash! Please sign in or register.</h1>
+                <h1>Edit {{ photo.file_name }}</h1>
                 <br>
                 <div class="row">
                   <div class="col-sm-6 mb-3 mb-md-0">
-
+                    <div class="card" style="width: 30rem;">
+                      <img src="/static/storage/{{ user.id }}/{{ photo.file_name }}" class="card-img-top" alt="...">
+                      <div class="card-body">
+                          <h5 class="card-title">{{ photo.file_name }}</h5>
+                          <p class="card-text">{{ photo.description }}</p>
+                          <p class="card-text">
+                              <small class="text-muted">Create Date: {{ photo.create_at }}</small>
+                          </p>
+                        </div>
+                    </div>
                   </div>
 
                   <div class="col-sm-6">
                     <div class="card">
                       <div class="card-body">
-                        <form class="text-center border border-light p-5" action="/login" method="POST">
-
-                            <p class="h4 mb-4">Login</p>
-
-                            <input type="email" name="login_email"id="defaultLoginFormEmail" class="form-control mb-4" placeholder="E-mail">
-
-                            <input type="password" name="login_password" id="defaultLoginFormPassword" class="form-control mb-4" placeholder="Password">
-
-                            <button class="btn btn-info btn-block my-4" type="submit">Sign in</button>
-                         </form>
+                        <form id="update_photo_info" action="/update_photo_info/{{ photo.id }}" method="POST">
+                          <div class="form-group">
+                            <label for="formGroupEditPhoto">Name</label>
+                            <input type="text" class="form-control" name="photo_file_name" id="photo_file_name" value="{{ photo.file_name }}">
+                            <label for="formGroupEditPhoto">Description</label>
+                            <input type="text" class="form-control" name="photo_description" id="photo_description" value="{{ photo.description }}">
+                            <label for="formGroupEditPhoto">Created Date</label>
+                            <input type="text" class="form-control" name="photo_create_date" id="photo_create_date" value="{{ photo.create_at }}">
+                            <button class="btn btn-info btn-block my-4" type="submit">Update</button>
+                          </div>
+                        </form>
+                        <form id="cancel_update_photo" action="/dashboard">
+                          <div class="form-group">
+                            <button class="btn btn-info btn-block my-4" type="submit">Cancel</button>
+                          </div>
+                        </form>
                       </div>
                     </div>
                   </div>

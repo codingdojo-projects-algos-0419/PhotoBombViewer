@@ -78,13 +78,14 @@ class Photos(db.Model):
     uploaded_by = db.relationship('Users', foreign_keys=[user_id], backref='user_photos')
 
     def __repr__(self):
-        return "Photos(id ='%s', user_id ='%s', description ='%s', file_path = '%s')" % \
-               (self.id, self.user_id, self.description, self.file_path)
+        return "Photos(id ='%s', user_id ='%s', description ='%s', file_path = '%s', create_at='%s)" % \
+               (self.id, self.user_id, self.description, self.file_path, self.create_at)
 
     @classmethod
-    def add_to_db(cls, filename, user_id):
+    def add_to_db(cls, filename, filepath, user_id):
         photo = cls(file_name=filename,
-                    user_id=user_id
+                    user_id=user_id,
+                    file_path=filepath
                     )
         db.session.add(photo)
         db.session.commit()
