@@ -9,6 +9,11 @@ import os.path
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
 
+tagged_table = db.Table('tagged',
+                        db.Column('photo_id', db.Integer, db.ForeignKey('photos.id'), primary_key=True),
+                        db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), primary_key=True))
+
+
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(45))
@@ -76,6 +81,7 @@ class Photos(db.Model):
     updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     uploaded_by = db.relationship('Users', foreign_keys=[user_id], backref='user_photos')
+    tags_on_this_photo = db.relationship('Tags', secondary='tagged')
 
     def __repr__(self):
         return "Photos(id ='%s', user_id ='%s', description ='%s', file_path = '%s', create_at='%s)" % \
@@ -91,4 +97,15 @@ class Photos(db.Model):
         db.session.commit()
         return photo.id
 
+
+class Tags(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    created_at = db.Column(db.DateTime, server_default=func.now())
+    updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
+    photos_using_this_tag = db.relationship('Photos', secondary='tagged')
+
+    def __repr__(self):
+        return "Tags(id ='%s', name ='%s', create_at='%s)" % \
+               (self.id, self.name, self.created_at)
 
