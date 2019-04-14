@@ -42,10 +42,8 @@
           <p class="card-text">
               <small class="text-muted">Create Date: {{ photo.create_at }}</small>
           </p>
-           <p>
-            <a href="/edit_photo/{{ photo.id }}" class="card-link float-right">Edit</a>
-            <a href="/delete_photo/{{ photo.id }}" class="card-link float-right">Delete</a>
-           </p>
+           <a href="/edit_photo/{{ photo.id }}" class="card-link">Edit</a>
+           <a href="/delete_photo/{{ photo.id }}" class="card-link float-right">Delete</a>
         </div>
       </div>
         {% endfor %}

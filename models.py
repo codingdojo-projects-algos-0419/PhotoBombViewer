@@ -97,6 +97,14 @@ class Photos(db.Model):
         db.session.commit()
         return photo.id
 
+    @classmethod
+    def delete_from_db(cls):
+        photo_to_delete = cls.id
+        print(f"Deleting {photo_to_delete}")
+        db.session.delete(photo_to_delete)
+        db.session.commit()
+        return
+
 
 class Tags(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -151,10 +151,28 @@ def update_photo_info(id):
     return redirect(url_for("show_dashboard"))
 
 
-def rotate_image():
-    image_path = "./static/storage/2/photo.JPG"
-    image_save_path = "./static/storage/2/photo.JPG_rotated.jpg"
-    image = Image.open(image_path)
-    image.rotate(90, expand=True).save(image_save_path)
-    return
+def delete_photo(id):
+    print(f"ROUTE: delete_photo")
+    # print(f"REQUEST FORM: {request.form}")
+    current_user = Users.query.get(session['user_id'])
+
+    photo = Photos.query.get(id)
+
+    store_path = photo.file_path + '/' + photo.file_name
+    print(f"Removing file {store_path}")
+
+    try:
+        if os.path.exists(store_path):
+            os.remove(store_path)
+        else:
+            raise IOError(f"Unable to find file: {store_path}")
+    except IOError as ex:
+        raise ex
+
+    db.session.delete(photo)
+    db.session.commit()
+
+    return redirect(url_for("show_dashboard"))
+
+
 
