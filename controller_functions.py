@@ -31,22 +31,15 @@ def upload_file():
         os.makedirs(store_file_path)
 
     print(f"ROUTE: upload_file")
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        if file.filename == '':
-            flash('No file selected for uploading')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            print(f"Uploading {file}")
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(store_file_path, filename))
+    if request.method == 'POST' and 'files' in request.files:
+        for f in request.files.getlist('files'):
+            filename = secure_filename(f.filename)
+            print(f"Uploading {filename}")
+            f.save(os.path.join(store_file_path, filename))
             flash('File(s) successfully uploaded')
             Photos.add_to_db(filename, store_file_path, user_id)
-            return redirect(url_for("show_dashboard"))
+
+    return redirect(url_for("show_dashboard"))
 
 
 def uploaded_file(filename):
@@ -73,7 +66,6 @@ def show_login_page():
 def login():
     print(f"ROUTE: login: {request.form}")
     valid, response = Users.login_validate(request.form)
-    print(f"Valid: {valid} Response= {response}")
 
     if not valid:
         flash(response)
@@ -89,7 +81,6 @@ def show_dashboard():
 
     current_user = Users.query.get(session['user_id'])
     current_user_photos = current_user.user_photos
-    print(f"PHOTOS: {current_user_photos}")
     return render_template("dashboard.html", user=current_user, photos=current_user_photos)
 
 
@@ -97,7 +88,6 @@ def process_new_user():
     print(f"ROUTE: process_new_user REQUEST: {request.form}")
     errors = Users.validate(request.form)
     if errors:
-        print(f" FOUND ERRORS: {errors}")
         for error in errors:
             flash(error)
         return redirect('/register')
@@ -122,30 +112,20 @@ def show_edit_page(id):
 
 def update_photo_info(id):
     print(f"ROUTE: update_photo_info")
-    # print(f"REQUEST FORM: {request.form}")
     current_user = Users.query.get(session['user_id'])
 
     photo = Photos.query.get(id)
 
     store_path = photo.file_path + '/' + photo.file_name
     store_path_new = photo.file_path + '/' + request.form['photo_file_name']
-    # print(f"Update filepath = {store_path}")
 
     if photo.file_name != request.form['photo_file_name']:
-        print(f"Update filename")
         photo.file_name = request.form['photo_file_name']
-        print(f"Renaming file from {store_path} to {store_path_new}")
         os.rename(store_path, store_path_new)
 
     if photo.description != request.form['photo_description']:
-        print(f"Update description")
         photo.description = request.form['photo_description']
 
-    # if photo.create_at != request.form['photo_create_date']:
-    #     print(f"Update create_date")
-    #     photo.create_at = request.form['photo_create_date']
-
-    # ret_id = str(photo.id)
     db.session.commit()
 
     return redirect(url_for("show_dashboard"))
@@ -153,7 +133,6 @@ def update_photo_info(id):
 
 def delete_photo(id):
     print(f"ROUTE: delete_photo")
-    # print(f"REQUEST FORM: {request.form}")
     current_user = Users.query.get(session['user_id'])
 
     photo = Photos.query.get(id)
